@@ -100,16 +100,28 @@ int main(int argc, char const *argv[])
         }
     }
     
+    for(int i = 0; i < N; ++i)
+    {
+        U_inverse[i*(N+1)] = 1/U[i*(N+1)];
+        for(int j = i+1; j < N; ++j)
+        {
+            dtype u = (dtype)0;
+            for(int k = i; k < j; ++k){
+                u+=U_inverse[i*N+k]*U[k*N+j];
+            }
+            U_inverse[i*N+j] = -u/U[j*(N+1)];
+        }
+    }
 
 
     showArray(A, N);
     showArray(L, N);
     showArray(U, N);
-    showArray(L_inverse, N);
+    showArray(U_inverse, N);
 
     
     dtype* test = (dtype*)calloc(N*N, dsize);
-    dot(L, L_inverse, test, N);
+    dot(U_inverse, L_inverse, test, N);
     showArray(test, N);
     
     return 0;
