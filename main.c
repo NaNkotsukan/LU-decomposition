@@ -83,12 +83,33 @@ int main(int argc, char const *argv[])
         
     }
 
+    dtype* L_inverse = (dtype*)calloc(N*N, dsize);
+    dtype* U_inverse = (dtype*)calloc(N*N, dsize);
+
+    
+    for(int i = 0; i < N; ++i)
+    {
+        L_inverse[i*(N+1)] = 1;
+        for(int j = 0; j < i; ++j)
+        {
+            dtype l = (dtype)0;
+            for(int k = j; k < i; ++k){
+                l+=L[i*N+k]*L_inverse[k*N+j];
+            }
+            L_inverse[i*N+j] = -l;
+        }
+    }
+    
+
+
     showArray(A, N);
     showArray(L, N);
     showArray(U, N);
+    showArray(L_inverse, N);
+
     
     dtype* test = (dtype*)calloc(N*N, dsize);
-    dot(L, U, test, N);
+    dot(L, L_inverse, test, N);
     showArray(test, N);
     
     return 0;
