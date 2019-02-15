@@ -9,7 +9,7 @@ typedef struct squareMatrix
 
 sqmx createMatrix(int);
 void deleteMatrix(sqmx);
-void showArray();
+void showArray(sqmx a);
 sqmx dot(sqmx, sqmx);
 sqmx loadMatrix(char*);
 void saveMatrix(char*, sqmx);

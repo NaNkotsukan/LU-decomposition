@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <float.h>
+#include <math.h>
+
 #include "matrix.h"
 
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 const int dsize = sizeof(dtype);
 
 
@@ -17,10 +22,25 @@ void deleteMatrix(sqmx a){
     free(a.data);
 }
 
-void showArray(sqmx array){
-    for(int i=0;i<array.N;++i){
-        for(int j=0;j<array.N;++j){
-            printf("% 5lf ", array.data[array.N*i+j]);
+void showArray(sqmx a){
+    double before = DBL_MIN, after = DBL_MAX;
+    char f[10];
+    for(int i = 0; i < a.N*a.N; ++i)
+    {
+        before = max(before, fabs(a.data[i]));
+        double t = fabs(a.data[i]);
+        after = min(after, t==0 ? 1 : fabs(a.data[i]));
+    }
+    int fuga = (int)log10(before);
+    int hoge = -(int)log10(after);
+    snprintf(f, 12, "%%%d.%dlf", fuga+hoge+6, max(hoge+2, 2-fuga));
+    printf(" N = %d\n", a.N);    
+    for(int i = 0; i < a.N; ++i)
+    {
+        for(int j = 0; j < a.N; ++j)
+        {
+            
+            printf(f, a.data[i*a.N+j]);
         }
         printf("\n");
     }
@@ -57,21 +77,31 @@ sqmx loadMatrix(char *filepass){
 
 void saveMatrix(char *filepass, sqmx a){
     FILE *fp = fopen( filepass, "w" );
+    fprintf(fp, "%d\n", a.N);  
+    double before = DBL_MIN, after = DBL_MAX;
+    char f[10];
+    for(int i = 0; i < a.N*a.N; ++i)
+    {
+        before = max(before, fabs(a.data[i]));
+        double t = fabs(a.data[i]);
+        after = min(after, t==0 ? 1 : fabs(a.data[i]));
+    }
+    int fuga = (int)log10(before);
+    int hoge = -(int)log10(after);
+    snprintf(f, 12, "%%%d.%dlf", fuga+hoge+6, max(hoge+2, 2-fuga));
     for(int i = 0; i < a.N; ++i)
     {
-        for(int j = 0; j < a.N-1; ++j)
+        for(int j = 0; j < a.N; ++j)
         {
-            fprintf(fp, "%lf ", a.data[i]);
+            
+            fprintf(fp, f, a.data[i*a.N+j]);
         }
-        fprintf(fp, "%lf\n", a.data[i]);
+        fprintf(fp, "\n");
     }
 }
 
 void calcLU(sqmx A, sqmx *L, sqmx *U){
     const int N = A.N;
-    // const int N = L->N = U->N = A.N;
-    // L->data = (dtype*)calloc(N*N, dsize);
-    // U->data = (dtype*)calloc(N*N, dsize);
     *L = createMatrix(A.N);
     *U = createMatrix(A.N);
 
