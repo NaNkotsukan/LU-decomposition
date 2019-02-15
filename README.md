@@ -11,7 +11,7 @@ gcc matrix.c -lm main.c
 # Description
 ## main.c
 サンプルコード．
-## A.txt
+## A.txt B.txt
 入力行列例
 ## matrix.c
 ### sqmx
